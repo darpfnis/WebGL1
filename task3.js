@@ -1,58 +1,76 @@
-// ── task2.js ──
-// Завдання 2: Кольоровий трикутник з унікальним кольором кожної вершини
+// ── task3.js ──
+// Завдання 3: Прямокутник із двох трикутників, обертання через requestAnimationFrame
 
 import { setupWebGL, createProgram } from './webgl-utils.js';
 
-export function task2() {
-  const gl = setupWebGL('canvas2');
+export function task3() {
+  const gl = setupWebGL('canvas3');
   if (!gl) return;
 
-  // Vertex shader: receives position + color per vertex
+  // Rotation is applied in the vertex shader via a uniform angle
   const vsSrc = `
     attribute vec2 aPosition;
-    attribute vec3 aColor;
-    varying   vec3 vColor;
+    uniform   float uAngle;
     void main() {
-      vColor      = aColor;
-      gl_Position = vec4(aPosition, 0.0, 1.0);
+      float c = cos(uAngle);
+      float s = sin(uAngle);
+      // Rotate around origin (center of square)
+      vec2 rotated = vec2(
+        c * aPosition.x - s * aPosition.y,
+        s * aPosition.x + c * aPosition.y
+      );
+      gl_Position = vec4(rotated, 0.0, 1.0);
     }
   `;
 
-  // Fragment shader: outputs interpolated vertex color
   const fsSrc = `
     precision mediump float;
-    varying vec3 vColor;
+    uniform float uAngle;
     void main() {
-      gl_FragColor = vec4(vColor, 1.0);
+      // Soft pink hue that shifts slightly with rotation
+      float t = sin(uAngle * 0.5) * 0.5 + 0.5;
+      gl_FragColor = vec4(
+        0.96,
+        0.71 + t * 0.12,
+        0.71 + t * 0.12,
+        1.0
+      );
     }
   `;
 
   const prog = createProgram(gl, vsSrc, fsSrc);
   gl.useProgram(prog);
 
-  //  Interleaved buffer layout: [ x, y,  r, g, b ]
-  const data = new Float32Array([
-  //   x      y      r     g     b
-     0.00,  0.72,  0.98, 0.71, 0.71,  // top    — pastel red / pink
-    -0.62, -0.60,  0.98, 0.86, 0.74,  // left   — pastel peach
-     0.62, -0.60,  0.74, 0.82, 0.98,  // right  — pastel blue
+  // Rectangle = 2 triangles, centered at (0, 0)
+  const h = 0.38;
+  const verts = new Float32Array([
+    -h,  h,   -h, -h,    h, -h,   // triangle 1
+    -h,  h,    h, -h,    h,  h,   // triangle 2
   ]);
-
   const buf = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-  gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-
-  const STRIDE = 5 * Float32Array.BYTES_PER_ELEMENT;
+  gl.bufferData(gl.ARRAY_BUFFER, verts, gl.STATIC_DRAW);
 
   const aPos = gl.getAttribLocation(prog, 'aPosition');
   gl.enableVertexAttribArray(aPos);
-  gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, STRIDE, 0);
+  gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
 
-  const aCol = gl.getAttribLocation(prog, 'aColor');
-  gl.enableVertexAttribArray(aCol);
-  gl.vertexAttribPointer(aCol, 3, gl.FLOAT, false, STRIDE, 2 * Float32Array.BYTES_PER_ELEMENT);
+  const uAngle = gl.getUniformLocation(prog, 'uAngle');
 
-  gl.clearColor(0.165, 0.153, 0.145, 1.0); // --grey-900
-  gl.clear(gl.COLOR_BUFFER_BIT);
-  gl.drawArrays(gl.TRIANGLES, 0, 3);
+  let angle = 0;
+  let lastTs = null;
+
+  function render(ts) {
+    if (lastTs !== null) angle += (ts - lastTs) * 0.0012;
+    lastTs = ts;
+
+    gl.clearColor(0.165, 0.153, 0.145, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniform1f(uAngle, angle);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+    requestAnimationFrame(render);
+  }
+
+  requestAnimationFrame(render);
 }
