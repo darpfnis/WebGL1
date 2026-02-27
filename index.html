@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ЛР №1 — WebGL</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <div class="header-badge">
+      <span class="dot"></span>
+      Комп'ютерна графіка
+    </div>
+    <h1>Лабораторна робота №1</h1>
+    <p>Основи створення найпростішої WebGL-програми</p>
+  </header>
+
+  <main class="grid">
+
+    <!-- Task 1 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-number">1</div>
+        <h2>Налаштування WebGL · setupWebGL + window.onload</h2>
+      </div>
+      <div class="card-body">
+        <canvas id="canvas1" width="420" height="240"></canvas>
+      </div>
+    </div>
+
+    <!-- Task 2 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-number">2</div>
+        <h2>Кольоровий трикутник · вершинний і фрагментний шейдери</h2>
+      </div>
+      <div class="card-body">
+        <canvas id="canvas2" width="420" height="240"></canvas>
+      </div>
+    </div>
+
+    <!-- Task 3 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-number">3</div>
+        <h2>Обертовий прямокутник · requestAnimationFrame</h2>
+      </div>
+      <div class="card-body">
+        <canvas id="canvas3" width="420" height="240"></canvas>
+      </div>
+    </div>
+
+    <!-- Task 4 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-number">4</div>
+        <h2>Зірка gl.TRIANGLE_FAN · рух вгору / вниз</h2>
+      </div>
+      <div class="card-body">
+        <canvas id="canvas4" width="420" height="240"></canvas>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>webgl · glsl · javascript &nbsp;·&nbsp; КПІ ім. Ігоря Сікорського</footer>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>
