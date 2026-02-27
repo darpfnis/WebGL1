@@ -7,14 +7,13 @@ export function task3() {
   const gl = setupWebGL('canvas3');
   if (!gl) return;
 
-  // Rotation is applied in the vertex shader via a uniform angle
   const vsSrc = `
+    precision mediump float; // ДОДАЙТЕ ЦЕЙ РЯДОК
     attribute vec2 aPosition;
-    uniform   float uAngle;
+    uniform float uAngle;
     void main() {
       float c = cos(uAngle);
       float s = sin(uAngle);
-      // Rotate around origin (center of square)
       vec2 rotated = vec2(
         c * aPosition.x - s * aPosition.y,
         s * aPosition.x + c * aPosition.y
@@ -27,14 +26,8 @@ export function task3() {
     precision mediump float;
     uniform float uAngle;
     void main() {
-      // Soft pink hue that shifts slightly with rotation
       float t = sin(uAngle * 0.5) * 0.5 + 0.5;
-      gl_FragColor = vec4(
-        0.96,
-        0.71 + t * 0.12,
-        0.71 + t * 0.12,
-        1.0
-      );
+      gl_FragColor = vec4(0.96, 0.71 + t * 0.12, 0.71 + t * 0.12, 1.0);
     }
   `;
 
